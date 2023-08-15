@@ -3,14 +3,19 @@ package com.kata.calculator;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class KataCalcApplication {
-    
-    static Calculator calculator; 
+public class Main {
+
+    static Calculator calculator;
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String expression = reader.readLine();
+        System.out.println(calc(expression));
+
+    }
+
+    private static String calc(String expression) throws Exception {
         String[] expArr = expression.split(" ");
 
         if (expArr.length == 1)
@@ -26,12 +31,11 @@ public class KataCalcApplication {
             if (expArr[2].matches("\\d+")) {
                 calculator = new ArabicCalculator();
                 num1 = Integer.parseInt(expArr[0]);
-                num1 = Integer.parseInt(expArr[2]);
-            }
-            else if (expArr[2].matches("[IVXLCDM]+")) {
+                num2 = Integer.parseInt(expArr[2]);
+                return String.valueOf(getAnswer(expArr[1], calculator, num1, num2));
+            } else if (expArr[2].matches("[IVXLCDM]+")) {
                 throw new Exception("т.к. используются одновременно разные системы счисления");
-            }
-            else {
+            } else {
                 throw new Exception("т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
             }
         } else if (expArr[0].matches("[IVXLCDM]+")) {
@@ -39,22 +43,19 @@ public class KataCalcApplication {
                 calculator = new RomeCalculator();
                 num1 = RomeCalculator.rome2arabic(expArr[0]);
                 num2 = RomeCalculator.rome2arabic(expArr[2]);
-                
-            }
-            else if (expArr[2].matches("\\d+")) {
+                return RomeCalculator.arabic2rome(getAnswer(expArr[1], calculator, num1, num2));
+            } else if (expArr[2].matches("\\d+")) {
                 throw new Exception("т.к. используются одновременно разные системы счисления");
-            }
-            else {
+            } else {
                 throw new Exception("т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
             }
 
         } else {
             throw new Exception("т.к. формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *)");
         }
-
     }
 
-    public int getAnswer(String operation, Calculator calc, int num1, int num2) {
+    private static int getAnswer(String operation, Calculator calc, int num1, int num2) {
         return switch (operation) {
             case "+" -> calc.sum(num1, num2);
             case "-" -> calc.sub(num1, num2);
